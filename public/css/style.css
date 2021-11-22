@@ -1,0 +1,16 @@
+/* This is my custom css file */
+
+.bg-none {
+    background-color: none !important;
+}
+
+
+.custom-link:hover {
+    text-decoration: none !important;
+}
+
+@media (max-width: 576px) {
+    .display-none {
+      display: none;
+    }
+}
