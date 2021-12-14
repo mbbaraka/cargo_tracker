@@ -1,10 +1,13 @@
 @extends('layouts.app')
 
+@section('title', 'Home')
+
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-4 display-none">
             <div class="card" style="min-height: 100%">
+                {{--  mobile nav  --}}
                 <div class="card-header">Menu</div>
 
                 <div class="card-body p-0">
@@ -12,8 +15,18 @@
                         <a class="list-group-item list-group-item-action active" href="{{ route('home') }}">Dashboard</a>
                         <a class="list-group-item list-group-item-action" href="{{ route('new') }}">{{ __('New Transaction') }}</a>
                         <a class="list-group-item list-group-item-action" href="{{ route('shippings') }}">{{ __('All Shippings') }}</a>
-                        <a class="list-group-item list-group-item-action" href="#">{{ __('My Profile') }}</a>
-                        <a class="list-group-item list-group-item-action" href="#">{{ __('Logout') }}</a>
+                        <a class="list-group-item list-group-item-action" href="{{ route('buses') }}">{{ __('Buses') }}</a>
+                        <a class="list-group-item list-group-item-action" href="{{ route('location') }}">{{ __('Location') }}</a>
+                        <a class="list-group-item list-group-item-action" href="{{ route('profile') }}">{{ __('My Profile') }}</a>
+                        <a class="list-group-item list-group-item-action" href="{{ route('logout') }}"
+                                onclick="event.preventDefault();
+                                                document.getElementById('logout-form').submit();">
+                                {{ __('Logout') }}
+                            </a>
+
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                @csrf
+                            </form>
                     </ul>
                 </div>
             </div>
@@ -30,49 +43,15 @@
                         </div>
                     @endif
 
-                    <div class="row">
-                        <div class="col-4">
-                            <a href="#" class="custom-link">
-                                <div class="card text-center">
-                                    <div class="card-body">
-                                        <h3><i class="fa fa-bell"></i></h3>
-                                        <h2 class="text-center">230</h2>
-                                        <h6>NOtifications</h6>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="col-4">
-                            <a href="#" class="custom-link">
-                                <div class="card text-center">
-                                    <div class="card-body">
-                                        <i class="fa fa-bell"></i>
-                                        <h2 class="text-center">230</h2>
-                                        <h6>Total Sent</h6>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="col-4">
-                            <a href="#" class="custom-link">
-                                <div class="card text-center">
-                                    <div class="card-body">
-                                        <i class="fa fa-bell"></i>
-                                        <h2 class="text-center">230</h2>
-                                        <h6>Total Sent</h6>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
+
                     <div class="row mt-3">
                         <div class="col-4">
-                            <a href="#" class="custom-link">
+                            <a href="{{ route('shippings') }}" class="custom-link">
                                 <div class="card text-center">
                                     <div class="card-body">
-                                        <h4><i class="fa fa-bell"></i></h4>
-                                        <h2 class="text-center">230</h2>
-                                        <h6>Total Sent</h6>
+                                        <img class="img-custom" src="{{ asset('images/cargo.png') }}" alt="">
+                                        <h2 class="text-center">{{ $cargos }}</h2>
+                                        <h6>Total Cargo Delivered</h6>
                                     </div>
                                 </div>
                             </a>
@@ -81,26 +60,73 @@
                             <a href="#" class="custom-link">
                                 <div class="card text-center">
                                     <div class="card-body">
-                                        <i class="fa fa-bell"></i>
-                                        <h2 class="text-center">230</h2>
-                                        <h6>Total Sent</h6>
+                                        <img class="img-custom" src="{{ asset('images/shipping.gif') }}" alt="">
+                                        <h2 class="text-center">{{ $shipping }}</h2>
+                                        <h6>Shipping Now</h6>
                                     </div>
                                 </div>
                             </a>
                         </div>
                         <div class="col-4">
-                            <a href="#" class="custom-link">
+                            <a href="{{ route('buses') }}" class="custom-link">
                                 <div class="card text-center">
                                     <div class="card-body">
-                                        <i class="fa fa-bell"></i>
-                                        <h2 class="text-center">230</h2>
-                                        <h6>Total Sent</h6>
+                                        <img class="img-custom" src="{{ asset('images/buses.png') }}" alt="">
+                                        <h2 class="text-center">{{ $buses }}</h2>
+                                        <h6>Total Buses</h6>
                                     </div>
                                 </div>
                             </a>
+                        </div>
+
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Shipping Summary</h6>
+                            <table class="table table-hover table-light">
+                                <tr>
+                                    <td>#</td>
+                                    <td>Received Cargo</td>
+                                    <td>{{ $received }}</td>
+                                </tr>
+                                <tr>
+                                    <td>#</td>
+                                    <td>Shipping Cargo</td>
+                                    <td>{{ $shipping }}</td>
+                                </tr>
+                                <tr>
+                                    <td>#</td>
+                                    <td>Ready to Pick Cargo</td>
+                                    <td>{{ $reached }}</td>
+                                </tr>
+                                <tr>
+                                    <td>#</td>
+                                    <td>Picked Cargo</td>
+                                    <td>{{ $cargos }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Movements by Location</h6>
+                            <table class="table table-hover table-dark">
+                                @if ($location->count() >0)
+                                    @foreach ($location as $item)
+                                        <tr>
+                                            <td>{{ $item->location }}</td>
+                                            <td>
+                                                @php
+                                                    $movement = App\Models\Shipping::where('destination', $item->id)->where('status', 'shipping');
+                                                    echo $movement->count()
+                                                @endphp
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @else
+                                    <tr><td colspan="2">No Items currently added</td></tr>
+                                @endif
+                            </table>
                         </div>
                     </div>
-                </div>
             </div>
         </div>
     </div>

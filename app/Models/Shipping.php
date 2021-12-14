@@ -12,5 +12,11 @@ class Shipping extends Model
     public $incrementing = false;
     public $keyType = 'string';
 
+    protected $primaryKey = 'txn_id';
+
     protected $table = 'transactions';
+
+    public function origins () {
+        return $this->belongsTo(Location::class, 'txn_id');
+    }
 }

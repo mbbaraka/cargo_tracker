@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'New Shipping')
+
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
@@ -12,8 +14,18 @@
                         <a class="list-group-item list-group-item-action" href="{{ route('home') }}">Dashboard</a>
                         <a class="list-group-item list-group-item-action active" href="{{ route('new') }}">{{ __('New Transaction') }}</a>
                         <a class="list-group-item list-group-item-action" href="{{ route('shippings') }}">{{ __('All Shippings') }}</a>
-                        <a class="list-group-item list-group-item-action" href="#">{{ __('My Profile') }}</a>
-                        <a class="list-group-item list-group-item-action" href="#">{{ __('Logout') }}</a>
+                        <a class="list-group-item list-group-item-action" href="{{ route('buses') }}">{{ __('Buses') }}</a>
+                        <a class="list-group-item list-group-item-action" href="{{ route('location') }}">{{ __('Location') }}</a>
+                        <a class="list-group-item list-group-item-action" href="{{ route('profile') }}">{{ __('My Profile') }}</a>
+                        <a class="list-group-item list-group-item-action" href="{{ route('logout') }}"
+                                onclick="event.preventDefault();
+                                                document.getElementById('logout-form').submit();">
+                                {{ __('Logout') }}
+                            </a>
+
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                @csrf
+                            </form>
                     </ul>
                 </div>
             </div>
@@ -21,7 +33,7 @@
 
         <div class="col-md-8">
             <div class="card" style="min-height: 100%">
-                <div class="card-header">{{ __('New Shipment') }}</div>
+                <div class="card-header">{{ __('New Cargo Shipping') }}</div>
 
                 <div class="card-body">
                     @if (session('status'))
@@ -51,6 +63,63 @@
                                         {{ old('cargo_desc') }}
                                     </textarea>
                                     @error('cargo_desc')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="origin">Origin</label>
+                                    <select name="origin" id="origin" class="form-control @error('destination') is-invalid @enderror">
+                                        @if ($locations->count() >0)
+                                        @foreach ($locations as $item)
+                                            <option value="{{ $item->id }}">{{ $item->location }}</option>
+                                        @endforeach
+                                        @else
+                                            <option>No Location added yet</option>
+                                        @endif
+                                    </select>
+                                    @error('origin')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="destination">Destination</label>
+                                    <select name="destination" id="destination" class="form-control @error('destination') is-invalid @enderror">
+                                        @if ($locations->count() >0)
+                                        @foreach ($locations as $item)
+                                            <option value="{{ $item->id }}">{{ $item->location }}</option>
+                                        @endforeach
+                                        @else
+                                            <option>No Location added yet</option>
+                                        @endif
+                                    </select>
+                                    @error('destination')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="bus">Bus</label>
+                                    <select name="bus" id="bus" class="form-control @error('bus') is-invalid @enderror">
+                                        @if ($buses->count() >0)
+                                        @foreach ($buses as $item)
+                                            <option value="{{ $item->bus_no }}">{{ $item->bus_no }}</option>
+                                        @endforeach
+                                        @else
+                                            <option>No bus added yet</option>
+                                        @endif
+                                    </select>
+                                    @error('bus')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
